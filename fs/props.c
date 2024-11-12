@@ -21,15 +21,15 @@ int main(int argc, char **argv) {
   printf("Fichero: %s\n", argv[1]);
 
   switch (data.st_mode & S_IFMT) {
-  case S_IFREG:
-    strcpy(file_type, "Fichero Regular");
-    break;
-  case S_IFDIR:
-    strcpy(file_type, "Directorio");
-    break;
-  default:
-    printf("Error, determinando el tipo de fichero\n");
-    exit(-1);
+    case S_IFREG:
+      strcpy(file_type, "Fichero Regular");
+      break;
+    case S_IFDIR:
+      strcpy(file_type, "Directorio");
+      break;
+    default:
+      printf("Error, determinando el tipo de fichero\n");
+      exit(-1);
   }
 
   printf("TIPO: %s\n", file_type);
