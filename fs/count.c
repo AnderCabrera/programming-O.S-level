@@ -44,14 +44,15 @@ int main(int argc, char **argv) {
           pipe(p2);
 
           // ls grep wc
-          
+
           if (fork()) {
             close(0);
             dup(p2[0]);
-            close(p1[1]);
-            close(p1[0]);
+            close(p2[0]);
+            close(p2[1]);
 
             printf("Numero de ficheros en %s: ", file);
+            fflush(stdout);
             execlp("wc", "wc", "-l", NULL);
 
             printf("Error wc\n");
@@ -60,11 +61,33 @@ int main(int argc, char **argv) {
             pipe(p1);
 
             if (fork()) {
-              
+              close(0);
+              dup(p1[0]);
+              close(1);
+              dup(p2[1]);
+
+              close(p1[0]);
+              close(p1[1]);
+              close(p2[0]);
+              close(p2[1]);
+
+              execlp("grep", "grep", "^.", NULL);
+
+              printf("Error grep\n");
+              exit(-1);
             } else {
+              close(1);
+              dup(p1[1]);
+              close(p1[1]);
+              close(p1[0]);
+              close(p2[0]);
+              close(p2[1]);
 
+              execlp("ls", "ls", "-l", file, NULL);
+
+              printf("Error ls\n");
+              exit(-1);
             }
-
           }
         }
       }
@@ -72,4 +95,6 @@ int main(int argc, char **argv) {
       free(file);
     }
   }
+
+  closedir(dir);
 }
